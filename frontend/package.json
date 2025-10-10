@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite preview",
-    "build": "vite build --base=/assets/lms/frontend/ && yarn copy-html-entry",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' vite build --base=/assets/lms/frontend/ && yarn copy-html-entry",
     "copy-html-entry": "cp ../lms/public/frontend/index.html ../lms/www/lms.html"
   },
   "dependencies": {
@@ -54,6 +54,7 @@
     "@vitejs/plugin-vue": "^5.0.3",
     "autoprefixer": "^10.4.2",
     "postcss": "^8.4.5",
+    "postcss-rtlcss": "^5.7.1",
     "vite": "^5.0.11",
     "vite-plugin-pwa": "^1.0.2"
   }

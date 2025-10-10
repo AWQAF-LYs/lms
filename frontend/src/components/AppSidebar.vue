@@ -83,11 +83,13 @@
 				"
 				:isSidebarCollapsed="sidebarStore.isSidebarCollapsed"
 			/>
+			<!--
 			<GettingStartedBanner
 				v-if="showOnboarding && !isOnboardingStepsCompleted"
 				:isSidebarCollapsed="sidebarStore.isSidebarCollapsed"
 				appName="learning"
 			/>
+			-->
 
 			<div
 				class="flex items-center mt-4"
@@ -304,7 +306,7 @@ const unreadNotifications = createResource({
 const addNotifications = () => {
 	if (user) {
 		sidebarLinks.value.push({
-			label: 'Notifications',
+			label: __('Notifications'),
 			icon: 'Bell',
 			to: 'Notifications',
 			activeFor: ['Notifications'],
@@ -316,7 +318,7 @@ const addNotifications = () => {
 const addQuizzes = () => {
 	if (isInstructor.value || isModerator.value) {
 		sidebarLinks.value.splice(4, 0, {
-			label: 'Quizzes',
+			label: __('Quizzes'),
 			icon: 'CircleHelp',
 			to: 'Quizzes',
 			activeFor: [
@@ -332,7 +334,7 @@ const addQuizzes = () => {
 const addAssignments = () => {
 	if (isInstructor.value || isModerator.value) {
 		sidebarLinks.value.splice(5, 0, {
-			label: 'Assignments',
+			label: __('Assignments'),
 			icon: 'Pencil',
 			to: 'Assignments',
 			activeFor: [
@@ -348,7 +350,7 @@ const addAssignments = () => {
 const addProgrammingExercises = () => {
 	if (isInstructor.value || isModerator.value) {
 		sidebarLinks.value.splice(3, 0, {
-			label: 'Programming Exercises',
+			label: __('Programming Exercises'),
 			icon: 'Code',
 			to: 'ProgrammingExercises',
 			activeFor: [
@@ -368,7 +370,7 @@ const addPrograms = async () => {
 	let index = 2
 
 	sidebarLinks.value.splice(index, 0, {
-		label: 'Programs',
+		label: __('Programs'),
 		icon: 'Route',
 		to: 'Programs',
 		activeFor: activeFor,
@@ -378,7 +380,7 @@ const addPrograms = async () => {
 const addContactUsDetails = () => {
 	if (settingsStore.contactUsEmail?.data || settingsStore.contactUsURL?.data) {
 		sidebarLinks.value.push({
-			label: 'Contact Us',
+			label: __('Contact Us'),
 			icon: settingsStore.contactUsURL?.data ? 'Headset' : 'Mail',
 			to: settingsStore.contactUsURL?.data
 				? settingsStore.contactUsURL.data
@@ -397,7 +399,7 @@ const checkIfCanAddProgram = async () => {
 
 const addHome = () => {
 	sidebarLinks.value.unshift({
-		label: 'Home',
+		label: __('Home'),
 		icon: 'Home',
 		to: 'Home',
 		activeFor: ['Home'],
@@ -652,7 +654,7 @@ const setUpOnboarding = () => {
 		onboardingDetails = useOnboarding('learning')
 		onboardingDetails.setUp(steps)
 		isOnboardingStepsCompleted = onboardingDetails.isOnboardingStepsCompleted
-		showOnboarding.value = true
+		showOnboarding.value = false
 	}
 }
 

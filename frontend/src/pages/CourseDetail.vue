@@ -125,6 +125,14 @@ const props = defineProps({
 	},
 })
 
+const isAdmin = computed(() => {
+	return (
+		user.data?.is_moderator ||
+		user.data?.is_instructor ||
+		user.data?.is_evaluator
+	)
+})
+
 const course = createResource({
 	url: 'lms.lms.utils.get_course_details',
 	cache: ['course', props.courseName],
@@ -144,7 +152,7 @@ watch(
 )
 
 watch(course, () => {
-	if (!isInstructor() && !course.data?.published && !course.data?.upcoming) {
+	if (!isAdmin.value && !isInstructor() && !course.data?.published && !course.data?.upcoming) {
 		router.push({
 			name: 'Courses',
 		})
@@ -161,8 +169,9 @@ const isInstructor = () => {
 	return user_is_instructor
 }
 
+
 const breadcrumbs = computed(() => {
-	let items = [{ label: 'Courses', route: { name: 'Courses' } }]
+	let items = [{ label: __('Courses'), route: { name: 'Courses' } }]
 	items.push({
 		label: course?.data?.title,
 		route: { name: 'CourseDetail', params: { courseName: course?.data?.name } },

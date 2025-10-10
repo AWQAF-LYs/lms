@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'Gess';
+  font-style:  normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url("GE_SS_Two_Light.otf") format("opentype");
+  unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF;
+}

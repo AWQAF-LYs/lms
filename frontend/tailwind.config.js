@@ -12,6 +12,10 @@ export default {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				'gess': ['Gess', 'sans-serif'],
+				'sans': ['Gess', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+			},
 			strokeWidth: {
 				1.5: '1.5',
 			},

@@ -675,25 +675,25 @@ const markLessonProgress = () => {
 const getSubmissionColumns = () => {
 	return [
 		{
-			label: 'No.',
+			label: __('No.'),
 			key: 'idx',
 		},
 		{
-			label: 'Date',
+			label: __('Date'),
 			key: 'creation',
 		},
 		{
-			label: 'Score',
+			label: __('Score'),
 			key: 'score',
 			align: 'center',
 		},
 		{
-			label: 'Score out of',
+			label: __('Score out of'),
 			key: 'score_out_of',
 			align: 'center',
 		},
 		{
-			label: 'Percentage',
+			label: __('Percentage'),
 			key: 'percentage',
 			align: 'center',
 		},

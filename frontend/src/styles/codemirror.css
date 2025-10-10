@@ -41,7 +41,8 @@
 	@apply !rounded-lg !shadow-md !bg-surface-white !p-1.5 !border-none;
 }
 .cm-tooltip-autocomplete > ul {
-	font-family: 'Inter' !important;
+	font-family: 'Gess', 'Inter' !important;
+	font-weight: 200;
 }
 .cm-tooltip-autocomplete ul li[aria-selected='true'] {
 	@apply !rounded !bg-gray-200/80;
