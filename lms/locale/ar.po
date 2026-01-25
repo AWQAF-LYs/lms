@@ -7906,3 +7906,15 @@ msgstr "{} اجتاز"
 #: lms/lms/workspace/lms/lms.json
 msgid "{} Published"
 msgstr "{} نشرت"
+
+#: lms/lms/doctype/lms_program/lms_program.js:7
+msgid "Enroll Users"
+msgstr "تسجيل المستخدمين"
+
+#: lms/lms/doctype/lms_program/lms_program.js:48
+msgid "Select Users to Enroll"
+msgstr "اختر المستخدمين للتسجيل"
+
+#: lms/lms/doctype/lms_program/lms_program.js:83
+msgid "Search by email or name..."
+msgstr "البحث بالبريد الإلكتروني أو الاسم..."

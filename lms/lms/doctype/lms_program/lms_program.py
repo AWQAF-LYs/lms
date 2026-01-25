@@ -1,6 +1,8 @@
 # Copyright (c) 2024, Frappe and contributors
 # For license information, please see license.txt
 
+import json
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -41,3 +43,63 @@ class LMSProgram(Document):
 
 		if self.member_count != member_count:
 			self.member_count = member_count
+
+
+@frappe.whitelist()
+def enroll_program_members(program, members):
+	"""
+	Enroll selected users in all courses of the program.
+	Creates LMS Enrollment records for each user-course combination.
+	"""
+	if isinstance(members, str):
+		members = json.loads(members)
+
+	if not members:
+		return {"created": 0, "skipped": 0}
+
+	# Get program document and check permissions
+	program_doc = frappe.get_doc("LMS Program", program)
+	program_doc.check_permission("write")
+
+	# Get all courses in the program
+	courses = [row.course for row in program_doc.program_courses if row.course]
+	if not courses:
+		frappe.throw(_("Please add courses to the program before enrolling users."))
+
+	# Get existing members to avoid duplicates in program_members
+	existing_members = {row.member for row in program_doc.program_members if row.member}
+
+	created = 0
+	skipped = 0
+
+	# Process each member
+	for member in members:
+		# Add member to program_members if not already added
+		if member not in existing_members:
+			program_doc.append("program_members", {"member": member})
+			existing_members.add(member)
+
+		# Create enrollment for each course
+		for course in courses:
+			# Check if enrollment already exists
+			if frappe.db.exists("LMS Enrollment", {"course": course, "member": member}):
+				skipped += 1
+				continue
+
+			# Create new enrollment
+			enrollment = frappe.new_doc("LMS Enrollment")
+			enrollment.update(
+				{
+					"course": course,
+					"member": member,
+					"member_type": "Student",
+					"role": "Member",
+				}
+			)
+			enrollment.insert(ignore_permissions=True)
+			created += 1
+
+	# Save program with new members
+	program_doc.save(ignore_permissions=True)
+
+	return {"created": created, "skipped": skipped}
