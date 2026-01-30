@@ -7911,6 +7911,66 @@ msgstr "{} نشرت"
 msgid "Enroll Student Groups"
 msgstr "تسجيل مجموعات الطلاب"
 
+#: lms/lms/doctype/lms_batch/lms_batch.js:60
+msgid "Enroll Student Groups"
+msgstr "تسجيل مجموعات الطلاب"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:87
+msgid "No student groups found"
+msgstr "لم يتم العثور على مجموعات طلاب"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:95
+msgid "Select Student Groups to Enroll"
+msgstr "اختر مجموعات الطلاب للتسجيل"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:102
+msgid "Enroll Selected"
+msgstr "تسجيل المحدد"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:113
+msgid "Please select at least one student group"
+msgstr "يرجى اختيار مجموعة طلاب واحدة على الأقل"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:120
+msgid "Enroll students from {0} group(s) in this batch?"
+msgstr "هل تريد تسجيل الطلاب من {0} مجموعة (مجموعات) في هذه الدفعة؟"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:134
+msgid "Search by group name..."
+msgstr "البحث باسم المجموعة..."
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:135
+msgid "Student Group Name"
+msgstr "اسم مجموعة الطلاب"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:136
+msgid "Program"
+msgstr "برنامج"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:212
+msgid "Enrolling users..."
+msgstr "جاري تسجيل المستخدمين..."
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:216
+msgid "Enrollment completed successfully!"
+msgstr "اكتملت عملية التسجيل بنجاح!"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:217
+msgid "Created: {0} enrollments"
+msgstr "تم إنشاء: {0} تسجيلات"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:218
+msgid "Skipped: {0} (already enrolled)"
+msgstr "تم التجاوز: {0} (مسجلون بالفعل)"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:221
+msgid "Enrollment Summary"
+msgstr "ملخص التسجيل"
+
+#: lms/lms/doctype/lms_batch/lms_batch.js:54
+msgid "See on website"
+msgstr "عرض على الموقع"
+
 #: lms/lms/doctype/lms_program/lms_program.js:48
 msgid "Select Student Groups to Enroll"
 msgstr "اختر مجموعات الطلاب للتسجيل"

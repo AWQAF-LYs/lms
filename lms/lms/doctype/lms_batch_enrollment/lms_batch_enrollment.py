@@ -1,8 +1,6 @@
 # Copyright (c) 2025, Frappe and contributors
 # For license information, please see license.txt
 
-import json
-
 import frappe
 from frappe import _
 from frappe.email.doctype.email_template.email_template import get_email_template
@@ -114,3 +112,52 @@ def send_mail(doc):
 		header=[_(batch.title), "green"],
 		retry=3,
 	)
+
+
+@frappe.whitelist()
+def enroll_student_groups(batch, student_groups):
+	if isinstance(student_groups, str):
+		student_groups = frappe.parse_json(student_groups)
+
+	if not student_groups:
+		return {"created": 0, "skipped": 0}
+
+	batch_doc = frappe.get_doc("LMS Batch", batch)
+	batch_doc.check_permission("write")
+
+	# Get students from groups
+	students = frappe.get_all(
+		"Student Group Student", filters={"parent": ["in", student_groups]}, pluck="student"
+	)
+
+	if not students:
+		return {"created": 0, "skipped": 0}
+
+	# Determine the correct field for User ID
+	student_meta = frappe.get_meta("Student")
+	user_field = "user_id" if student_meta.has_field("user_id") else "student_email_id"
+
+	# Fetch users for students
+	users = frappe.get_all(
+		"Student",
+		filters={"name": ["in", students], user_field: ["is", "set"]},
+		pluck=user_field,
+	)
+
+	# Filter out any potential None values and duplicates
+	users = list(set(filter(None, users)))
+
+	created = 0
+	skipped = 0
+
+	for member in users:
+		if frappe.db.exists("LMS Batch Enrollment", {"batch": batch, "member": member}):
+			skipped += 1
+			continue
+
+		enrollment = frappe.new_doc("LMS Batch Enrollment")
+		enrollment.update({"batch": batch, "member": member})
+		enrollment.insert(ignore_permissions=True)
+		created += 1
+
+	return {"created": created, "skipped": skipped}

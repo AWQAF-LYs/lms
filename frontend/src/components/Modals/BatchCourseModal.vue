@@ -55,7 +55,13 @@ const evaluator = ref(null)
 const user = inject('$user')
 const courses = defineModel('courses')
 const router = useRouter()
-const { updateOnboardingStep } = useOnboarding('learning')
+const onboarding = useOnboarding('learning')
+console.debug('[BatchCourseModal] onboarding init', {
+	currentUser: user?.data?.name,
+	role: user?.data?.is_system_manager,
+	onboarding,
+})
+const { updateOnboardingStep } = onboarding || {}
 
 const props = defineProps({
 	batch: {
@@ -81,12 +87,19 @@ const createBatchCourse = createResource({
 })
 
 const addCourse = (close) => {
+	console.debug('[BatchCourseModal] addCourse start', {
+		batch: props.batch,
+		course: course.value,
+		evaluator: evaluator.value,
+		hasOnboarding: Boolean(onboarding),
+	})
 	createBatchCourse.submit(
 		{},
 		{
 			onSuccess() {
-				if (user.data?.is_system_manager)
-					updateOnboardingStep('add_batch_course')
+			if (user.data?.is_system_manager && updateOnboardingStep) {
+				updateOnboardingStep('add_batch_course')
+			}
 
 				close()
 				courses.value.reload()

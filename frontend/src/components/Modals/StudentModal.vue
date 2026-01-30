@@ -40,7 +40,13 @@ const students = defineModel('reloadStudents')
 const batchModal = defineModel('batchModal')
 const student = ref()
 const user = inject('$user')
-const { updateOnboardingStep } = useOnboarding('learning')
+const onboarding = useOnboarding('learning')
+console.debug('[StudentModal] onboarding init', {
+	currentUser: user?.data?.name,
+	role: user?.data?.is_system_manager,
+	onboarding,
+})
+const { updateOnboardingStep } = onboarding || {}
 const show = defineModel()
 
 const props = defineProps({
@@ -64,12 +70,20 @@ const studentResource = createResource({
 })
 
 const addStudent = (close) => {
+	console.debug('[StudentModal] addStudent start', {
+		batch: props.batch,
+		student: student.value,
+		hasOnboarding: Boolean(onboarding),
+		studentsModel: Boolean(students?.value),
+		batchModalModel: Boolean(batchModal?.value),
+	})
 	studentResource.submit(
 		{},
 		{
 			onSuccess() {
-				if (user.data?.is_system_manager)
-					updateOnboardingStep('add_batch_student')
+			if (user.data?.is_system_manager && updateOnboardingStep) {
+				updateOnboardingStep('add_batch_student')
+			}
 
 				students.value.reload()
 				batchModal.value.reload()
