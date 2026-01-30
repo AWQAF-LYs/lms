@@ -4,111 +4,98 @@
 frappe.ui.form.on("LMS Program", {
 	refresh(frm) {
 		if (!frm.is_new()) {
-			frm.add_custom_button(__('Enroll Users'), function() {
-				show_user_selection_dialog(frm);
+			frm.add_custom_button(__('Enroll Student Groups'), function() {
+				show_student_group_selection_dialog(frm);
 			});
 		}
 	},
 });
 
-function show_user_selection_dialog(frm) {
-	// Get already enrolled members to exclude from selection
-	let enrolled_members = frm.doc.program_members.map(row => row.member);
-	
-	// Prepare exclusion list
-	let excluded_users = ['Administrator', 'Guest'];
-	if (enrolled_members && enrolled_members.length > 0) {
-		excluded_users = excluded_users.concat(enrolled_members);
-	}
-
-	// Fetch users first
+function show_student_group_selection_dialog(frm) {
+	// Fetch student groups
 	frappe.call({
 		method: 'frappe.client.get_list',
 		args: {
-			doctype: 'User',
-			fields: ['name', 'full_name', 'email'],
-			filters: {
-				enabled: 1,
-				name: ['not in', excluded_users]
-			},
+			doctype: 'Student Group',
+			fields: ['name', 'program', 'academic_term', 'academic_year'],
 			limit_page_length: 999
 		},
 		callback: function(r) {
 			if (r.message && r.message.length > 0) {
-				show_selection_dialog(frm, r.message);
+				show_group_selection_dialog(frm, r.message);
 			} else {
-				frappe.msgprint(__('No users found to enroll'));
+				frappe.msgprint(__('No student groups found'));
 			}
 		}
 	});
 }
 
-function show_selection_dialog(frm, users) {
+function show_group_selection_dialog(frm, groups) {
 	let dialog = new frappe.ui.Dialog({
-		title: __('Select Users to Enroll'),
+		title: __('Select Student Groups to Enroll'),
 		fields: [
 			{
-				fieldname: 'users_html',
+				fieldname: 'groups_html',
 				fieldtype: 'HTML'
 			}
 		],
 		primary_action_label: __('Enroll Selected'),
 		primary_action: function() {
-			let selected_users = [];
+			let selected_groups = [];
 			dialog.$wrapper.find('input[type="checkbox"]:checked').each(function() {
 				let val = $(this).val();
 				if (val && val !== 'on') { // Exclude the select-all checkbox
-					selected_users.push(val);
+					selected_groups.push(val);
 				}
 			});
 			
-			if (selected_users.length === 0) {
-				frappe.msgprint(__('Please select at least one user'));
+			if (selected_groups.length === 0) {
+				frappe.msgprint(__('Please select at least one student group'));
 				return;
 			}
 
 			dialog.hide();
 			
 			frappe.confirm(
-				__('Enroll {0} user(s) in all courses of this program?', [selected_users.length]),
+				__('Enroll students from {0} group(s) in all courses of this program?', [selected_groups.length]),
 				function() {
-					enroll_users_in_program(frm, selected_users);
+					enroll_student_groups_in_program(frm, selected_groups);
 				}
 			);
 		}
 	});
 
 	// Build HTML with search field and table
-	const searchPlaceholder = __('Search by email or name...');
-	const emailLabel = __('Email');
-	const fullNameLabel = __('Full Name');
+	const searchPlaceholder = __('Search by group name...');
+	const nameLabel = __('Student Group Name');
+	const programLabel = __('Program');
 	
 	let html = `
 		<div class="form-group">
 			<input type="text"
-				   id="user_search"
+				   id="group_search"
 				   class="form-control"
 				   placeholder="${searchPlaceholder}"
 				   style="margin-bottom: 15px;">
 		</div>
 		<div style="max-height: 400px; overflow-y: auto;">
-			<table class="table table-bordered" id="users_table">
+			<table class="table table-bordered" id="groups_table">
 				<thead>
 					<tr>
-						<th width="50"><input type="checkbox" id="select_all_users"></th>
-						<th>${emailLabel}</th>
-						<th>${fullNameLabel}</th>
+						<th width="50"><input type="checkbox" id="select_all_groups"></th>
+						<th>${nameLabel}</th>
+						<th>${programLabel}</th>
 					</tr>
 				</thead>
 				<tbody>
 	`;
 	
-	users.forEach(function(user) {
+	groups.forEach(function(group) {
 		html += `
-			<tr class="user-row">
-				<td><input type="checkbox" class="user-checkbox" value="${user.name}"></td>
-				<td>${user.name}</td>
-				<td>${user.full_name || ''}</td>
+			<tr class="group-row">
+				<td><input type="checkbox" class="group-checkbox" value="${group.name}"></td>
+				<td>${group.name}</td>
+				<td>${group.program || ''}</td>
 			</tr>
 		`;
 	});
@@ -119,23 +106,23 @@ function show_selection_dialog(frm, users) {
 		</div>
 	`;
 	
-	dialog.fields_dict.users_html.$wrapper.html(html);
+	dialog.fields_dict.groups_html.$wrapper.html(html);
 	
 	// Select all functionality
-	dialog.$wrapper.find('#select_all_users').on('change', function() {
+	dialog.$wrapper.find('#select_all_groups').on('change', function() {
 		// Only check visible rows
-		dialog.$wrapper.find('.user-row:visible .user-checkbox').prop('checked', $(this).is(':checked'));
+		dialog.$wrapper.find('.group-row:visible .group-checkbox').prop('checked', $(this).is(':checked'));
 	});
 	
 	// Search functionality
-	dialog.$wrapper.find('#user_search').on('keyup', function() {
+	dialog.$wrapper.find('#group_search').on('keyup', function() {
 		let search_term = $(this).val().toLowerCase();
 		
-		dialog.$wrapper.find('.user-row').each(function() {
-			let email = $(this).find('td:eq(1)').text().toLowerCase();
-			let name = $(this).find('td:eq(2)').text().toLowerCase();
+		dialog.$wrapper.find('.group-row').each(function() {
+			let name = $(this).find('td:eq(1)').text().toLowerCase();
+			let program = $(this).find('td:eq(2)').text().toLowerCase();
 			
-			if (email.includes(search_term) || name.includes(search_term)) {
+			if (name.includes(search_term) || program.includes(search_term)) {
 				$(this).show();
 			} else {
 				$(this).hide();
@@ -144,19 +131,19 @@ function show_selection_dialog(frm, users) {
 		
 		// Uncheck select-all if search is active
 		if (search_term) {
-			dialog.$wrapper.find('#select_all_users').prop('checked', false);
+			dialog.$wrapper.find('#select_all_groups').prop('checked', false);
 		}
 	});
 	
 	dialog.show();
 }
 
-function enroll_users_in_program(frm, users) {
+function enroll_student_groups_in_program(frm, groups) {
 	frappe.call({
-		method: 'lms.lms.doctype.lms_program.lms_program.enroll_program_members',
+		method: 'lms.lms.doctype.lms_program.lms_program.enroll_student_groups',
 		args: {
 			program: frm.doc.name,
-			members: users
+			student_groups: groups
 		},
 		freeze: true,
 		freeze_message: __('Enrolling users...'),

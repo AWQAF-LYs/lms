@@ -103,3 +103,36 @@ def enroll_program_members(program, members):
 	program_doc.save(ignore_permissions=True)
 
 	return {"created": created, "skipped": skipped}
+
+
+@frappe.whitelist()
+def enroll_student_groups(program, student_groups):
+	if isinstance(student_groups, str):
+		student_groups = json.loads(student_groups)
+
+	if not student_groups:
+		return {"created": 0, "skipped": 0}
+
+	# Get students from groups
+	students = frappe.get_all(
+		"Student Group Student", filters={"parent": ["in", student_groups]}, pluck="student"
+	)
+
+	if not students:
+		return {"created": 0, "skipped": 0}
+
+	# Determine the correct field for User ID
+	student_meta = frappe.get_meta("Student")
+	user_field = "user_id" if student_meta.has_field("user_id") else "student_email_id"
+
+	# Fetch users for students
+	users = frappe.get_all(
+		"Student",
+		filters={"name": ["in", students], user_field: ["is", "set"]},
+		pluck=user_field,
+	)
+
+	# Filter out any potential None values and duplicates
+	users = list(set(filter(None, users)))
+
+	return enroll_program_members(program, users)

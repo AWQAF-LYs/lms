@@ -7908,13 +7908,29 @@ msgid "{} Published"
 msgstr "{} نشرت"
 
 #: lms/lms/doctype/lms_program/lms_program.js:7
-msgid "Enroll Users"
-msgstr "تسجيل المستخدمين"
+msgid "Enroll Student Groups"
+msgstr "تسجيل مجموعات الطلاب"
 
 #: lms/lms/doctype/lms_program/lms_program.js:48
-msgid "Select Users to Enroll"
-msgstr "اختر المستخدمين للتسجيل"
+msgid "Select Student Groups to Enroll"
+msgstr "اختر مجموعات الطلاب للتسجيل"
 
 #: lms/lms/doctype/lms_program/lms_program.js:83
-msgid "Search by email or name..."
-msgstr "البحث بالبريد الإلكتروني أو الاسم..."
+msgid "Search by group name..."
+msgstr "البحث باسم المجموعة..."
+
+#: lms/lms/doctype/lms_program/lms_program.js:66
+msgid "Please select at least one student group"
+msgstr "يرجى اختيار مجموعة طلاب واحدة على الأقل"
+
+#: lms/lms/doctype/lms_program/lms_program.js:73
+msgid "Enroll students from {0} group(s) in all courses of this program?"
+msgstr "هل تريد تسجيل الطلاب من {0} مجموعة (مجموعات) في جميع دورات هذا البرنامج؟"
+
+#: lms/lms/doctype/lms_program/lms_program.js:84
+msgid "Student Group Name"
+msgstr "اسم مجموعة الطلاب"
+
+#: lms/lms/doctype/lms_program/lms_program.js:40
+msgid "No student groups found"
+msgstr "لم يتم العثور على مجموعات طلاب"
