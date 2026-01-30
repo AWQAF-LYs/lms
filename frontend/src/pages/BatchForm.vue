@@ -349,7 +349,8 @@ import {
 const router = useRouter()
 const user = inject('$user')
 const { brand } = sessionStore()
-const { updateOnboardingStep } = useOnboarding('learning')
+const onboarding = useOnboarding('learning') || {}
+const { updateOnboardingStep } = onboarding
 const instructors = ref([])
 const app = getCurrentInstance()
 const { $dialog } = app.appContext.config.globalProperties
@@ -513,7 +514,7 @@ const createNewBatch = () => {
 		{},
 		{
 			onSuccess(data) {
-				if (user.data?.is_system_manager) {
+				if (user.data?.is_system_manager && updateOnboardingStep) {
 					updateOnboardingStep('create_first_batch', true, false, () => {
 						localStorage.setItem('firstBatch', data.name)
 					})
