@@ -397,7 +397,7 @@ export function getUserTimezone() {
 		}
 	} catch (error) {
 		console.error('Error getting timezone:', error)
-		return null
+		return 'UTC'
 	}
 }
 

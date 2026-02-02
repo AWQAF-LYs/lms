@@ -147,6 +147,7 @@ def create_live_class(
 	description=None,
 ):
 	frappe.only_for("Moderator")
+	logger = frappe.logger("lms")
 	payload = {
 		"topic": title,
 		"start_time": format_datetime(f"{date} {time}", "yyyy-MM-ddTHH:mm:ssZ"),
@@ -162,6 +163,21 @@ def create_live_class(
 	}
 	response = requests.post(
 		"https://api.zoom.us/v2/users/me/meetings", headers=headers, data=json.dumps(payload)
+	)
+	frappe.log_error(
+		message={
+			"zoom_account": zoom_account,
+			"batch": batch_name,
+			"status": response.status_code,
+			"content_type": response.headers.get("Content-Type"),
+			"body_snippet": response.text[:500] if response.text else None,
+		},
+		title="Zoom create_live_class response",
+	)
+	logger.info(
+		"zoom.create_live_class response=%s status=%s",
+		{"zoom_account": zoom_account, "batch": batch_name},
+		response.status_code,
 	)
 
 	if response.status_code == 201:
@@ -196,6 +212,8 @@ def authenticate(zoom_account):
 	if not zoom.enabled:
 		frappe.throw(_("Please enable the zoom account to use this feature."))
 
+	logger = frappe.logger("lms")
+
 	authenticate_url = (
 		f"https://zoom.us/oauth/token?grant_type=account_credentials&account_id={zoom.account_id}"
 	)
@@ -210,7 +228,28 @@ def authenticate(zoom_account):
 		).decode()
 	}
 	response = requests.request("POST", authenticate_url, headers=headers)
-	return response.json()["access_token"]
+	response_json = None
+	try:
+		response_json = response.json()
+	except ValueError:
+		response_json = None
+
+	frappe.log_error(
+		message={
+			"zoom_account": zoom_account,
+			"account_id": zoom.account_id,
+			"status": response.status_code,
+			"content_type": response.headers.get("Content-Type"),
+			"json_keys": list(response_json.keys()) if isinstance(response_json, dict) else None,
+			"body_snippet": response.text[:500] if response.text else None,
+		},
+		title="Zoom authenticate response",
+	)
+
+	if not isinstance(response_json, dict) or "access_token" not in response_json:
+		frappe.throw(_("Zoom authentication failed. Please verify account credentials."))
+
+	return response_json["access_token"]
 
 
 @frappe.whitelist()

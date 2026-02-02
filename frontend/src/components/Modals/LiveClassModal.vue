@@ -59,12 +59,12 @@
 								{{ __('Timezone') }}
 								<span class="text-ink-red-3">*</span>
 							</label>
-							<Autocomplete
-								@update:modelValue="(opt) => (liveClass.timezone = opt.value)"
-								:modelValue="liveClass.timezone"
-								:options="getTimezoneOptions()"
-								:required="true"
-							/>
+					<Autocomplete
+						@update:modelValue="(opt) => (liveClass.timezone = opt?.value || 'UTC')"
+						:modelValue="liveClass.timezone || 'UTC'"
+						:options="getTimezoneOptions()"
+						:required="true"
+					/>
 						</div>
 						<FormControl
 							v-model="liveClass.auto_recording"
@@ -124,7 +124,7 @@ let liveClass = reactive({
 })
 
 onMounted(() => {
-	liveClass.timezone = getUserTimezone()
+	liveClass.timezone = getUserTimezone() || 'UTC'
 })
 
 const getTimezoneOptions = () => {
@@ -234,7 +234,7 @@ const refreshForm = () => {
 	liveClass.date = ''
 	liveClass.time = ''
 	liveClass.duration = ''
-	liveClass.timezone = getUserTimezone()
+	liveClass.timezone = getUserTimezone() || 'UTC'
 	liveClass.auto_recording = 'No Recording'
 }
 </script>
